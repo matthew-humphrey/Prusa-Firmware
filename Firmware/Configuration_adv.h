@@ -430,6 +430,9 @@ const unsigned int dropsegments=5; //everything with less than this number of st
 #if TEMP_SENSOR_AMBIENT > 0
   #define THERMISTORAMBIENT TEMP_SENSOR_AMBIENT
 #endif
+#if TEMP_SENSOR_HEATBREAK > 0
+  #define THERMISTORHEATBREAK TEMP_SENSOR_HEATBREAK
+#endif
 #if TEMP_SENSOR_0 == -1
   #define HEATER_0_USES_AD595
 #endif

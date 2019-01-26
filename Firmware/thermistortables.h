@@ -1373,6 +1373,11 @@ const short temptable_2000[][2] PROGMEM = {
 # define AMBIENTTEMPTABLE_LEN (sizeof(AMBIENTTEMPTABLE)/sizeof(*AMBIENTTEMPTABLE))
 #endif
 
+#ifdef THERMISTORHEATBREAK
+# define HEATBREAKTEMPTABLE TT_NAME(THERMISTORHEATBREAK)
+# define HEATBREAKTEMPTABLE_LEN (sizeof(HEATBREAKTEMPTABLE)/sizeof(*HEATBREAKTEMPTABLE))
+#endif
+
 //Set the high and low raw values for the heater, this indicates which raw value is a high or low temperature
 #ifndef HEATER_BED_RAW_HI_TEMP
 # ifdef BED_USES_THERMISTOR   //In case of a thermistor the highest temperature results in the lowest ADC value

@@ -55,6 +55,10 @@ extern float current_temperature_pinda;
 extern float current_temperature_ambient;
 #endif
 
+#ifdef HEATBREAK_THERMISTOR
+extern float current_temperature_heatbreak;
+#endif
+
 #ifdef VOLT_PWR_PIN
 extern int current_voltage_raw_pwr;
 #endif

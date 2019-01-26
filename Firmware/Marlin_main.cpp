@@ -5480,6 +5480,11 @@ Sigma_Exit:
 		SERIAL_PROTOCOL_F(current_temperature_ambient,1);
 #endif //AMBIENT_THERMISTOR
 
+#ifdef HEATBREAK_THERMISTOR
+		SERIAL_PROTOCOLPGM(" H:");
+		SERIAL_PROTOCOL_F(current_temperature_heatbreak,1);
+#endif
+
 
         #ifdef SHOW_TEMP_ADC_VALUES
           {float raw = 0.0;

@@ -60,6 +60,11 @@ int current_temperature_raw_ambient =  0 ;
 float current_temperature_ambient = 0.0;
 #endif //AMBIENT_THERMISTOR
 
+#ifdef HEATBREAK_THERMISTOR
+int current_temperature_raw_heatbreak =  0 ;
+float current_temperature_heatbreak = 0.0;
+#endif
+
 #ifdef VOLT_PWR_PIN
 int current_voltage_raw_pwr = 0;
 #endif
@@ -946,6 +951,29 @@ static float analog2tempAmbient(int raw)
 }
 #endif //AMBIENT_THERMISTOR
 
+#ifdef HEATBREAK_THERMISTOR
+static float analog2tempHeatbreak(int raw)
+{
+    float celsius = 0;
+    byte i;
+
+    for (i=1; i<HEATBREAKTEMPTABLE_LEN; i++)
+    {
+      if (PGM_RD_W(HEATBREAKTEMPTABLE[i][0]) > raw)
+      {
+        celsius  = PGM_RD_W(HEATBREAKTEMPTABLE[i-1][1]) + 
+          (raw - PGM_RD_W(HEATBREAKTEMPTABLE[i-1][0])) * 
+          (float)(PGM_RD_W(HEATBREAKTEMPTABLE[i][1]) - PGM_RD_W(HEATBREAKTEMPTABLE[i-1][1])) /
+          (float)(PGM_RD_W(HEATBREAKTEMPTABLE[i][0]) - PGM_RD_W(HEATBREAKTEMPTABLE[i-1][0]));
+        break;
+      }
+    }
+    // Overflow: Set to last value in the table
+    if (i == HEATBREAKTEMPTABLE_LEN) celsius = PGM_RD_W(HEATBREAKTEMPTABLE[i-1][1]);
+    return celsius;
+}
+#endif // HEATBREAK_THERMISTOR
+
 /* Called to get the raw values into the the actual temperatures. The raw values are created in interrupt context,
     and this function is called from normal context as it is too slow to run in interrupts and will block the stepper routine otherwise */
 static void updateTemperaturesFromRawValues()
@@ -961,6 +989,10 @@ static void updateTemperaturesFromRawValues()
 
 #ifdef AMBIENT_THERMISTOR
 	current_temperature_ambient = analog2tempAmbient(current_temperature_raw_ambient); //thermistor for ambient is NTCG104LH104JT1 (2000)
+#endif
+
+#ifdef HEATBREAK_THERMISTOR
+  current_temperature_heatbreak = analog2tempHeatbreak(current_temperature_raw_heatbreak); 
 #endif
    
 #ifdef DEBUG_HEATER_BED_SIM
@@ -1516,6 +1548,9 @@ void adc_ready(void) //callback from adc when sampling finished
 #ifdef AMBIENT_THERMISTOR
 	current_temperature_raw_ambient = adc_values[ADC_PIN_IDX(TEMP_AMBIENT_PIN)];
 #endif //AMBIENT_THERMISTOR
+#ifdef HEATBREAK_THERMISTOR
+  current_temperature_raw_heatbreak = adc_values[ADC_PIN_IDX(TEMP_HEATBREAK_PIN)];
+#endif
 #ifdef VOLT_BED_PIN
 	current_voltage_raw_bed = adc_values[ADC_PIN_IDX(VOLT_BED_PIN)]; // 6->9
 #endif
